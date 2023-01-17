@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Path
 from fastapi.responses import JSONResponse
 
-from app import service
+from init import service
 from structs import menu
 
 menuRouter = APIRouter()
