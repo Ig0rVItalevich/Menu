@@ -31,6 +31,7 @@ class DB:
             yield session
             session.commit()
         except Exception as e:
+            print(f"\n\n\n\n\n{e}\n\n\n\n")
             session.rollback()
             raise e
         finally:
