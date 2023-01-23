@@ -1,4 +1,5 @@
 import configparser
+import os
 
 from storage import repository as repo
 from storage import models
@@ -12,7 +13,7 @@ CONFIG = {
     "host": config["DATABASE"]["host"],
     "port": config["DATABASE"]["port"],
     "username": config["DATABASE"]["username"],
-    "password": config["DATABASE"]["password"],
+    "password": os.environ.get('DB_PASSWORD'),
     "database": config["DATABASE"]["database"]
 }
 
