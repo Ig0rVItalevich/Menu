@@ -51,7 +51,7 @@ def test_patch_dish(init_db, client, adding_dish, upgrade_adding_dish):
         response["description"] == upgrade_adding_dish["description"] and response["price"] == upgrade_adding_dish["price"]
 
 
-# def test_delete_dish(init_db, client, adding_dish):
-#     response = client.delete(f"/api/v1/menus/1/submenus/1/dishes/{adding_dish['id']}")
+def test_delete_dish(init_db, client, adding_dish):
+    response = client.delete(f"/api/v1/menus/1/submenus/1/dishes/{adding_dish['id']}")
 
-#     assert response.status_code == status.HTTP_200_OK  
+    assert response.status_code == status.HTTP_200_OK  
