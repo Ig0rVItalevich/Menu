@@ -1,5 +1,6 @@
-from .models import Menu, Submenu, Dish
 from structs import menu as MN
+
+from .models import Dish, Menu, Submenu
 
 
 class MenuRepository():
@@ -12,12 +13,20 @@ class MenuRepository():
         with self.db.session_scope() as s:
             for menu in s.query(Menu).all():
                 submenusCount = s.query(Submenu).filter(
-                    Submenu.menu_id == menu.id).count()
+                    Submenu.menu_id == menu.id,
+                ).count()
                 dishesCount = s.query(Menu, Submenu, Dish).filter(
-                    (Menu.id == Submenu.menu_id) & (Submenu.id == Dish.submenu_id)).count()
+                    (Menu.id == Submenu.menu_id) & (
+                        Submenu.id == Dish.submenu_id
+                    ),
+                ).count()
 
-                menus.append(MN.MenuShow(id=str(menu.id), title=menu.title, description=menu.description,
-                                         submenus_count=submenusCount, dishes_count=dishesCount))
+                menus.append(
+                    MN.MenuShow(
+                        id=str(menu.id), title=menu.title, description=menu.description,
+                        submenus_count=submenusCount, dishes_count=dishesCount,
+                    ),
+                )
 
         return menus
 
@@ -28,14 +37,18 @@ class MenuRepository():
             menu = s.query(Menu).filter(Menu.id == menuId).first()
             if menu is None:
                 return None
-            
-            submenusCount = s.query(Submenu).filter(
-                Submenu.menu_id == menuId).count()
-            dishesCount = s.query(Menu, Submenu, Dish).filter(
-                (Menu.id == Submenu.menu_id) & (Submenu.id == Dish.submenu_id)).count()
 
-            menuRes = MN.MenuShow(id=str(menu.id), title=menu.title, description=menu.description,
-                                  submenus_count=submenusCount, dishes_count=dishesCount)
+            submenusCount = s.query(Submenu).filter(
+                Submenu.menu_id == menuId,
+            ).count()
+            dishesCount = s.query(Menu, Submenu, Dish).filter(
+                (Menu.id == Submenu.menu_id) & (Submenu.id == Dish.submenu_id),
+            ).count()
+
+            menuRes = MN.MenuShow(
+                id=str(menu.id), title=menu.title, description=menu.description,
+                submenus_count=submenusCount, dishes_count=dishesCount,
+            )
 
         return menuRes
 
@@ -50,7 +63,7 @@ class MenuRepository():
             menu = s.query(Menu).filter(Menu.id == menuId).first()
             if menu is None:
                 return None
-            
+
             menu.title = menuUpdate.title
             menu.description = menuUpdate.description
 
@@ -61,6 +74,6 @@ class MenuRepository():
             menu = s.query(Menu).filter(Menu.id == menuId).first()
             if menu is None:
                 return None
-            
+
             s.delete(menu)
         return menuId

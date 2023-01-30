@@ -1,33 +1,55 @@
-from structs import dish as DSH
+from cache.cache import Cache
 from storage import models
 
 
 class DishService():
-    def __init__(self, repos):
+    def __init__(self, repos, cache: Cache):
         self.repos = repos
+        self.cache = cache
 
     def getDishes(self, submenuId):
         return self.repos.getDishes(submenuId)
 
-    def getDish(self, dishId):
-        return self.repos.getDish(dishId)
+    def getDish(self, menuId, submenuId, dishId):
+        cacheId = f'dish:{dishId}'
+        cacheValue = self.cache.get(cacheId)
+        if cacheValue is not None:
+            return cacheValue
 
-    def createDish(self, dish):
+        bdValue = self.repos.getDish(dishId)
+        if bdValue is None:
+            return bdValue
+        self.cache.set(
+            cacheId, {
+                'id': bdValue.id, 'title': bdValue.title,
+                'description': bdValue.description, 'submenu_id': bdValue.submenu_id, 'price': bdValue.price,
+            },
+        )
+
+        return bdValue
+
+    def createDish(self, dish, menuId, submenuId):
         dishModel = models.Dish(
-            title=dish.title, description=dish.description, price=dish.price, submenu_id=dish.submenu_id)
+            title=dish.title, description=dish.description, price=dish.price, submenu_id=submenuId,
+        )
         dishCreated = self.repos.createDish(dishModel)
 
-        return DSH.DishCreated(id=int(dishCreated.id), title=dishCreated.title,
-                               description=dishCreated.description, price="{:.2f}".format(dishCreated.price))
+        return dishCreated
 
-    def updateDish(self, dishUpdate, dishId):
+    def updateDish(self, dishUpdate, menuId, submenuId, dishId):
         dishModel = models.Dish(
             title=dishUpdate.title, description=dishUpdate.description, price=dishUpdate.price,
-            submenu_id=dishUpdate.submenu_id)
+            submenu_id=dishUpdate.submenu_id,
+        )
         updatedDish = self.repos.updateDish(dishId, dishModel)
-        
-        return DSH.DishCreated(id=str(updatedDish.id), title=updatedDish.title,
-                               description=updatedDish.description, price="{:.2f}".format(updatedDish.price))
 
-    def deleteDish(self, dishId):
+        self.cache.delete(f'dish:{dishId}')
+
+        return updatedDish
+
+    def deleteDish(self, menuId, submenuId, dishId):
         self.repos.deleteDish(dishId)
+
+        self.cache.delete(f'dish:{dishId}')
+        self.cache.delete(f'submenu:{submenuId}')
+        self.cache.delete(f'menu:{menuId}')
