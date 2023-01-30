@@ -126,14 +126,19 @@ def init_db():
     for submenu in adding_submenus:
         repository.submenuRepository.createSubmenu(
             models.Submenu(
-                title=submenu['title'], description=submenu['description'], menu_id=submenu['menu_id'],
+                title=submenu['title'],
+                description=submenu['description'],
+                menu_id=submenu['menu_id'],
             ),
         )
 
     for dish in adding_dishes:
         repository.dishRepository.createDish(
             models.Dish(
-                title=dish['title'], description=dish['description'], price=dish['price'], submenu_id=dish['submenu_id'],
+                title=dish['title'],
+                description=dish['description'],
+                price=dish['price'],
+                submenu_id=dish['submenu_id'],
             ),
         )
 

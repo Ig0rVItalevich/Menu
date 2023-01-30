@@ -23,8 +23,11 @@ class MenuRepository():
 
                 menus.append(
                     MN.MenuShow(
-                        id=str(menu.id), title=menu.title, description=menu.description,
-                        submenus_count=submenusCount, dishes_count=dishesCount,
+                        id=str(menu.id),
+                        title=menu.title,
+                        description=menu.description,
+                        submenus_count=submenusCount,
+                        dishes_count=dishesCount,
                     ),
                 )
 
@@ -46,8 +49,11 @@ class MenuRepository():
             ).count()
 
             menuRes = MN.MenuShow(
-                id=str(menu.id), title=menu.title, description=menu.description,
-                submenus_count=submenusCount, dishes_count=dishesCount,
+                id=str(menu.id),
+                title=menu.title,
+                description=menu.description,
+                submenus_count=submenusCount,
+                dishes_count=dishesCount,
             )
 
         return menuRes

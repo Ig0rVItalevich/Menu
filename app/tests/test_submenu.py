@@ -19,7 +19,8 @@ def test_post_submenu(client, adding_submenu):
 
     response = response.json()
     assert response['id'] is not None
-    assert response['title'] == adding_submenu['title'] and response['description'] == adding_submenu['description']
+    assert response['title'] == adding_submenu['title'] and \
+        response['description'] == adding_submenu['description']
 
 
 def test_get_submenu_positive(client, adding_submenu):
@@ -28,7 +29,8 @@ def test_get_submenu_positive(client, adding_submenu):
     assert response.status_code == status.HTTP_200_OK
 
     response = response.json()
-    assert response['id'] == adding_submenu['id'] and response['title'] == adding_submenu['title'] and \
+    assert response['id'] == adding_submenu['id'] and \
+        response['title'] == adding_submenu['title'] and \
         response['description'] == adding_submenu['description']
 
 
@@ -40,7 +42,8 @@ def test_get_submenu_negative(client):
 
 def test_patch_submenu(client, adding_submenu, upgrade_adding_submenu):
     response = client.patch(
-        f"/api/v1/menus/1/submenus/{adding_submenu['id']}", json=upgrade_adding_submenu,
+        f"/api/v1/menus/1/submenus/{adding_submenu['id']}",
+        json=upgrade_adding_submenu,
     )
 
     assert response.status_code == status.HTTP_200_OK

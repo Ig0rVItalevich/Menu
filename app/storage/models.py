@@ -13,7 +13,8 @@ class Menu(DeclarativeBase):
     description = Column('description', Text, nullable=False)
 
     def __repr__(self):
-        return f'id: {self.id}, title: {self.title}, description: {self.description}'
+        return f'id: {self.id}, title: {self.title}, \
+            description: {self.description}'
 
 
 class Submenu(DeclarativeBase):
@@ -27,7 +28,8 @@ class Submenu(DeclarativeBase):
     menu = relationship(Menu, innerjoin=True)
 
     def __repr__(self):
-        return f'id: {self.id}, title: {self.title}, description: {self.description}'
+        return f'id: {self.id}, title: {self.title}, \
+            description: {self.description}'
 
 
 class Dish(DeclarativeBase):
@@ -42,4 +44,5 @@ class Dish(DeclarativeBase):
     submenu = relationship(Submenu, innerjoin=True)
 
     def __repr__(self):
-        return f'id: {self.id}, title: {self.title}, description: {self.description}, price: {self.price}'
+        return f'id: {self.id}, title: {self.title}, \
+            description: {self.description}, price: {self.price}'

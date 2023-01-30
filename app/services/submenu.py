@@ -20,8 +20,10 @@ class SubmenuService():
             return bdValue
         self.cache.set(
             cacheId, {
-                'title': bdValue.title, 'description': bdValue.description,
-                'menu_id': bdValue.menu_id, 'dishes_count': bdValue.dishes_count,
+                'title': bdValue.title,
+                'description': bdValue.description,
+                'menu_id': bdValue.menu_id,
+                'dishes_count': bdValue.dishes_count,
             },
         )
 
@@ -29,7 +31,9 @@ class SubmenuService():
 
     def createSubmenu(self, submenu, menuId):
         submenuModel = models.Submenu(
-            title=submenu.title, description=submenu.description, menu_id=menuId,
+            title=submenu.title,
+            description=submenu.description,
+            menu_id=menuId,
         )
         submenuCreated = self.repos.createSubmenu(submenuModel)
 
@@ -39,7 +43,9 @@ class SubmenuService():
 
     def updateSubmenu(self, submenuUpdate, menuId, submenuId):
         submenuModel = models.Submenu(
-            title=submenuUpdate.title, description=submenuUpdate.description, menu_id=submenuUpdate.menu_id,
+            title=submenuUpdate.title,
+            description=submenuUpdate.description,
+            menu_id=submenuUpdate.menu_id,
         )
 
         self.cache.delete(f'submenu:{submenuId}')

@@ -1,13 +1,14 @@
-import redis
 import pickle
+
+import redis
 
 
 class Cache():
     def __init__(self, config):
         self.cache = redis.StrictRedis(
-            host=config["host"],
-            port=config["port"],
-            db=config["db"]
+            host=config['host'],
+            port=config['port'],
+            db=config['db'],
         )
 
     def set(self, id, model):
@@ -18,7 +19,7 @@ class Cache():
         cacheModel = self.cache.get(id)
         if cacheModel is None:
             return None
-        
+
         return pickle.loads(cacheModel)
 
     def delete(self, id):

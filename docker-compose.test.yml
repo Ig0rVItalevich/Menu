@@ -8,11 +8,18 @@ services:
     ports:
       - 5438:5432
 
+  cache:
+    image: redis:latest
+    restart: always
+    ports:
+      - 6377:6379
+
   app-test:
     build: ./
     command: sh -c "./wait-for-postgres.sh db && cd app && pytest -v -p no:warnings"
     depends_on:
       - db
+      - cache
     environment:
       - DB_PASSWORD=qwerty
       - PYTHONPATH=./

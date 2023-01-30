@@ -21,8 +21,11 @@ class DishService():
             return bdValue
         self.cache.set(
             cacheId, {
-                'id': bdValue.id, 'title': bdValue.title,
-                'description': bdValue.description, 'submenu_id': bdValue.submenu_id, 'price': bdValue.price,
+                'id': bdValue.id,
+                'title': bdValue.title,
+                'description': bdValue.description,
+                'submenu_id': bdValue.submenu_id,
+                'price': bdValue.price,
             },
         )
 
@@ -30,7 +33,10 @@ class DishService():
 
     def createDish(self, dish, menuId, submenuId):
         dishModel = models.Dish(
-            title=dish.title, description=dish.description, price=dish.price, submenu_id=submenuId,
+            title=dish.title,
+            description=dish.description,
+            price=dish.price,
+            submenu_id=submenuId,
         )
         dishCreated = self.repos.createDish(dishModel)
 
@@ -38,7 +44,9 @@ class DishService():
 
     def updateDish(self, dishUpdate, menuId, submenuId, dishId):
         dishModel = models.Dish(
-            title=dishUpdate.title, description=dishUpdate.description, price=dishUpdate.price,
+            title=dishUpdate.title,
+            description=dishUpdate.description,
+            price=dishUpdate.price,
             submenu_id=dishUpdate.submenu_id,
         )
         updatedDish = self.repos.updateDish(dishId, dishModel)

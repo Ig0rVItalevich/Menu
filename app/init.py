@@ -14,8 +14,7 @@ CONFIG_DB = {
     'host': config['DATABASE']['host'],
     'port': config['DATABASE']['port'],
     'username': config['DATABASE']['username'],
-    # "password": os.environ.get('DB_PASSWORD'),
-    'password': config['DATABASE']['password'],
+    'password': os.environ.get('DB_PASSWORD'),
     'database': config['DATABASE']['database'],
 }
 

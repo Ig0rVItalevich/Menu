@@ -1,5 +1,4 @@
 from storage import models
-from structs import menu as MN
 
 
 class MenuService():
@@ -21,15 +20,21 @@ class MenuService():
             return bdValue
         self.cache.set(
             cacheId, {
-                'id': bdValue.id, 'title': bdValue.title, 'description': bdValue.description,
-                'submenus_count': bdValue.submenus_count, 'dishes_count': bdValue.dishes_count,
+                'id': bdValue.id,
+                'title': bdValue.title,
+                'description': bdValue.description,
+                'submenus_count': bdValue.submenus_count,
+                'dishes_count': bdValue.dishes_count,
             },
         )
 
         return bdValue
 
     def createMenu(self, menu):
-        menuModel = models.Menu(title=menu.title, description=menu.description)
+        menuModel = models.Menu(
+            title=menu.title,
+            description=menu.description,
+        )
         menuCreated = self.repos.createMenu(menuModel)
 
         return menuCreated

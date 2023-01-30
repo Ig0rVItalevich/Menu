@@ -19,7 +19,8 @@ def test_post_menu(client, adding_menu):
 
     response = response.json()
     assert response['id'] is not None
-    assert response['title'] == adding_menu['title'] and response['description'] == adding_menu['description']
+    assert response['title'] == adding_menu['title'] and \
+        response['description'] == adding_menu['description']
 
 
 def test_get_menu_positive(client, adding_menu):
@@ -28,7 +29,8 @@ def test_get_menu_positive(client, adding_menu):
     assert response.status_code == status.HTTP_200_OK
 
     response = response.json()
-    assert response['id'] == adding_menu['id'] and response['title'] == adding_menu['title'] and \
+    assert response['id'] == adding_menu['id'] and \
+        response['title'] == adding_menu['title'] and \
         response['description'] == adding_menu['description']
 
 

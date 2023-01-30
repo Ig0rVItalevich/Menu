@@ -11,6 +11,12 @@ services:
     ports:
       - 5436:5432
 
+  cache:
+    image: redis:latest
+    restart: always
+    ports:
+      - 6378:6379
+
   app-menu:
     build: ./
     command: sh -c "./wait-for-postgres.sh db && cd app && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
@@ -18,5 +24,6 @@ services:
       - 8000:8000
     depends_on:
       - db
+      - cache
     environment:
       - DB_PASSWORD=qwerty

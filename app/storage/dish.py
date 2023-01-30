@@ -11,11 +11,16 @@ class DishRepository():
         dishes = []
 
         with self.db.session_scope() as s:
-            for dish in s.query(Dish).filter(Dish.submenu_id == submenuId).all():
+            for dish in s.query(Dish).filter(
+                    Dish.submenu_id == submenuId,
+            ).all():
                 dishes.append(
                     DSH.DishShow(
-                        id=str(dish.id), title=dish.title, description=dish.description,
-                        price=f'{dish.price:.2f}', submenu_id=dish.submenu_id,
+                        id=str(dish.id),
+                        title=dish.title,
+                        description=dish.description,
+                        price=f'{dish.price:.2f}',
+                        submenu_id=dish.submenu_id,
                     ),
                 )
 
@@ -30,8 +35,11 @@ class DishRepository():
                 return None
 
             dishRes = DSH.DishShow(
-                id=str(dish.id), title=dish.title, description=dish.description,
-                price=f'{dish.price:.2f}', submenu_id=dish.submenu_id,
+                id=str(dish.id),
+                title=dish.title,
+                description=dish.description,
+                price=f'{dish.price:.2f}',
+                submenu_id=dish.submenu_id,
             )
 
         return dishRes

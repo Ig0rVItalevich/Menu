@@ -18,8 +18,10 @@ class SubmenuRepository():
 
                 submenus.append(
                     SB.SubMenuShow(
-                        id=str(submenu.id), title=submenu.title,
-                        description=submenu.description, menu_id=submenu.menu_id,
+                        id=str(submenu.id),
+                        title=submenu.title,
+                        description=submenu.description,
+                        menu_id=submenu.menu_id,
                         dishes_count=dishesCount,
                     ),
                 )

@@ -1,6 +1,6 @@
+from .dish import DishService
 from .menu import MenuService
 from .submenu import SubmenuService
-from .dish import DishService
 
 
 class Service():
