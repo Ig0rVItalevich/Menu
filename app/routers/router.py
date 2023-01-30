@@ -8,14 +8,24 @@ from .submenu import submenuRouter
 def init_router():
     router = FastAPI()
 
-    router.include_router(menuRouter, prefix='/api/v1/menus', tags=['menu'])
+    prefix_menu = '/api/v1/menus'
+    prefix_submenu = '/api/v1/menus/{menu_id}/submenus'
+    prefix_dishes = '/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes'
+
     router.include_router(
-        submenuRouter, prefix='/api/v1/menus/{menu_id}/submenus',
+        menuRouter,
+        prefix=prefix_menu,
+        tags=['menu'],
+    )
+    router.include_router(
+        submenuRouter,
+        prefix=prefix_submenu,
         tags=['submenu'],
     )
     router.include_router(
-        dishRouter, prefix='/api/v1/menus/{menu_id}/submenus/\
-            {submenu_id}/dishes', tags=['dish'],
+        dishRouter,
+        prefix=prefix_dishes,
+        tags=['dish'],
     )
 
     return router
