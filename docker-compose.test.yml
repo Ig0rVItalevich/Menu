@@ -22,6 +22,3 @@ services:
       - cache
     env_file:
       - .env
-    environment:
-      - PYTHONPATH=./
-      - SQLALCHEMY_SILENCE_UBER_WARNING=1
