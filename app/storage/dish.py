@@ -1,21 +1,45 @@
-from structs import dish as DSH
+from abc import ABC, abstractmethod
+from structs.dish import DishShow
 
 from .models import Dish
+from .database import DB
 
 
-class DishRepository():
-    def __init__(self, db):
+class AbstractDishRepository(ABC):
+    @abstractmethod
+    def get_dishes(self, submenu_id):
+        pass
+
+    @abstractmethod
+    def get_dish(self, dish_id):
+        pass
+
+    @abstractmethod
+    def create_dish(self, dish):
+        pass
+
+    @abstractmethod
+    def update_dish(self, dish_id, dish_update):
+        pass
+
+    @abstractmethod
+    def delete_dish(self, dish_id):
+        pass
+
+
+class DishRepository(AbstractDishRepository):
+    def __init__(self, db: DB):
         self.db = db
 
-    def getDishes(self, submenuId):
+    def get_dishes(self, submenu_id: str) -> list[DishShow]:
         dishes = []
 
         with self.db.session_scope() as s:
             for dish in s.query(Dish).filter(
-                    Dish.submenu_id == submenuId,
+                    Dish.submenu_id == submenu_id,
             ).all():
                 dishes.append(
-                    DSH.DishShow(
+                    DishShow(
                         id=str(dish.id),
                         title=dish.title,
                         description=dish.description,
@@ -26,15 +50,15 @@ class DishRepository():
 
         return dishes
 
-    def getDish(self, dishId):
-        dishRes = None
+    def get_dish(self, dish_id: str) -> DishShow:
+        dish_res = None
 
         with self.db.session_scope() as s:
-            dish = s.query(Dish).filter(Dish.id == dishId).first()
+            dish = s.query(Dish).filter(Dish.id == dish_id).first()
             if dish is None:
                 return None
 
-            dishRes = DSH.DishShow(
+            dish_res = DishShow(
                 id=str(dish.id),
                 title=dish.title,
                 description=dish.description,
@@ -42,32 +66,32 @@ class DishRepository():
                 submenu_id=dish.submenu_id,
             )
 
-        return dishRes
+        return dish_res
 
-    def createDish(self, dish):
+    def create_dish(self, dish: Dish) -> Dish:
         with self.db.session_scope() as s:
             s.add(dish)
 
         return dish
 
-    def updateDish(self, dishId, dishUpdate):
+    def update_dish(self, dish_id: str, dish_update: Dish) -> Dish:
         with self.db.session_scope() as s:
-            dish = s.query(Dish).filter(Dish.id == dishId).first()
+            dish = s.query(Dish).filter(Dish.id == dish_id).first()
             if dish is None:
                 return None
 
-            dish.title = dishUpdate.title
-            dish.description = dishUpdate.description
-            dish.price = dishUpdate.price
+            dish.title = dish_update.title
+            dish.description = dish_update.description
+            dish.price = dish_update.price
 
-        return dishUpdate
+        return dish_update
 
-    def deleteDish(self, dishId):
+    def delete_dish(self, dish_id: str) -> str:
         with self.db.session_scope() as s:
-            dish = s.query(Dish).filter(Dish.id == dishId).first()
+            dish = s.query(Dish).filter(Dish.id == dish_id).first()
             if dish is None:
                 return None
 
             s.delete(dish)
 
-        return dishId
+        return dish_id

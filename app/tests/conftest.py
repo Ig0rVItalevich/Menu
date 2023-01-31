@@ -117,14 +117,14 @@ def upgrade_adding_dish():
 @pytest.fixture(scope='session')
 def init_db():
     for menu in adding_menus:
-        repository.menuRepository.createMenu(
+        repository.menu_repository.create_menu(
             models.Menu(
                 title=menu['title'], description=menu['description'],
             ),
         )
 
     for submenu in adding_submenus:
-        repository.submenuRepository.createSubmenu(
+        repository.submenu_repository.create_submenu(
             models.Submenu(
                 title=submenu['title'],
                 description=submenu['description'],
@@ -133,7 +133,7 @@ def init_db():
         )
 
     for dish in adding_dishes:
-        repository.dishRepository.createDish(
+        repository.dish_repository.create_dish(
             models.Dish(
                 title=dish['title'],
                 description=dish['description'],

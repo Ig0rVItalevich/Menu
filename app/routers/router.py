@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
-from .dish import dishRouter
-from .menu import menuRouter
-from .submenu import submenuRouter
+from .dish import dish_router
+from .menu import menu_router
+from .submenu import submenu_router
 
 
 def init_router():
@@ -13,17 +13,17 @@ def init_router():
     prefix_dishes = '/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes'
 
     router.include_router(
-        menuRouter,
+        menu_router,
         prefix=prefix_menu,
         tags=['menu'],
     )
     router.include_router(
-        submenuRouter,
+        submenu_router,
         prefix=prefix_submenu,
         tags=['submenu'],
     )
     router.include_router(
-        dishRouter,
+        dish_router,
         prefix=prefix_dishes,
         tags=['dish'],
     )

@@ -3,84 +3,84 @@ from fastapi.responses import JSONResponse
 from init import service
 from structs.menu import MenuCreate, MenuCreated, MenuShow
 
-menuRouter = APIRouter()
+menu_router = APIRouter()
 
 
-@menuRouter.get(
+@menu_router.get(
     path='/',
     summary='Get menus',
     description='Get all menus',
     response_model=list[MenuShow],
     status_code=status.HTTP_200_OK,
 )
-def getMenus():
-    return service.menuService.getMenus()
+def get_menus():
+    return service.menu_service.get_menus()
 
 
-@menuRouter.get(
+@menu_router.get(
     path='/{menu_id}',
     summary='Get menu',
     description='Get concrete menu',
     response_model=MenuShow,
     status_code=status.HTTP_200_OK,
 )
-def getMenu(menu_id: int = Path(..., gt=0)):
-    menuSelected = service.menuService.getMenu(menu_id)
+def get_menu(menu_id: int = Path(..., gt=0)):
+    menu_selected = service.menu_service.get_menu(menu_id)
 
-    if menuSelected is None:
+    if menu_selected is None:
         return JSONResponse(
             content={'detail': 'menu not found'},
             status_code=status.HTTP_404_NOT_FOUND,
         )
     else:
-        return menuSelected
+        return menu_selected
 
 
-@menuRouter.post(
+@menu_router.post(
     path='/',
     summary='Post menu',
     description='Post one menu',
     response_model=MenuCreated,
     status_code=status.HTTP_201_CREATED,
 )
-def createMenu(menu: MenuCreate):
-    menuCreated = service.menuService.createMenu(menu)
+def create_menu(menu: MenuCreate):
+    menu_created = service.menu_service.create_menu(menu)
 
     return MenuCreated(
-        id=menuCreated.id,
-        title=menuCreated.title,
-        description=menuCreated.description,
+        id=menu_created.id,
+        title=menu_created.title,
+        description=menu_created.description,
     )
 
 
-@menuRouter.patch(
+@menu_router.patch(
     path='/{menu_id}',
     summary='Upgrade menu',
     description='Upgrade one menu',
     response_model=MenuCreate,
     status_code=status.HTTP_200_OK,
 )
-def updateMenu(menu: MenuCreate, menu_id: int = Path(..., gt=0)):
-    menuUpdated = service.menuService.updateMenu(menu, menu_id)
+def update_menu(menu: MenuCreate, menu_id: int = Path(..., gt=0)):
+    menu_updated = service.menu_service.update_menu(menu, menu_id)
 
-    if menuUpdated is None:
+    if menu_updated is None:
         return JSONResponse(
             content={'detail': 'menu not found'},
             status_code=status.HTTP_404_NOT_FOUND,
         )
     else:
         return MenuCreated(
-            id=str(menuUpdated.id),
-            title=menuUpdated.title,
-            description=menuUpdated.description,
+            id=str(menu_updated.id),
+            title=menu_updated.title,
+            description=menu_updated.description,
         )
 
 
-@menuRouter.delete(
+@menu_router.delete(
     path='/{menu_id}',
     summary='Delete menu',
     description='Delete one menu',
     status_code=status.HTTP_200_OK,
 )
-def deleteMenu(menu_id: int = Path(..., gt=0)):
-    service.menuService.deleteMenu(menu_id)
+def delete_menu(menu_id: int = Path(..., gt=0)):
+    service.menu_service.delete_menu(menu_id)

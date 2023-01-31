@@ -1,85 +1,109 @@
-from structs import menu as MN
+from abc import ABC, abstractmethod
+from structs.menu import MenuShow
 
 from .models import Dish, Menu, Submenu
+from .database import DB
 
 
-class MenuRepository():
-    def __init__(self, db):
+class AbstractMenuRepository(ABC):
+    @abstractmethod
+    def get_menus(self):
+        pass
+
+    @abstractmethod
+    def get_menu(self, menu_id):
+        pass
+
+    @abstractmethod
+    def create_menu(self, menu):
+        pass
+
+    @abstractmethod
+    def update_menu(self, menu_id, menu_update):
+        pass
+
+    @abstractmethod
+    def delete_menu(self, menu_id):
+        pass
+
+
+class MenuRepository(AbstractMenuRepository):
+    def __init__(self, db: DB):
         self.db = db
 
-    def getMenus(self):
+    def get_menus(self) -> list[MenuShow]:
         menus = []
 
         with self.db.session_scope() as s:
             for menu in s.query(Menu).all():
-                submenusCount = s.query(Submenu).filter(
+                submenus_count = s.query(Submenu).filter(
                     Submenu.menu_id == menu.id,
                 ).count()
-                dishesCount = s.query(Menu, Submenu, Dish).filter(
+                dishes_count = s.query(Menu, Submenu, Dish).filter(
                     (Menu.id == Submenu.menu_id) & (
                         Submenu.id == Dish.submenu_id
                     ),
                 ).count()
 
                 menus.append(
-                    MN.MenuShow(
+                    MenuShow(
                         id=str(menu.id),
                         title=menu.title,
                         description=menu.description,
-                        submenus_count=submenusCount,
-                        dishes_count=dishesCount,
+                        submenus_count=submenus_count,
+                        dishes_count=dishes_count,
                     ),
                 )
 
         return menus
 
-    def getMenu(self, menuId):
-        menuRes = None
+    def get_menu(self, menu_id: str) -> MenuShow:
+        menu_res = None
 
         with self.db.session_scope() as s:
-            menu = s.query(Menu).filter(Menu.id == menuId).first()
+            menu = s.query(Menu).filter(Menu.id == menu_id).first()
             if menu is None:
                 return None
 
-            submenusCount = s.query(Submenu).filter(
-                Submenu.menu_id == menuId,
+            submenus_count = s.query(Submenu).filter(
+                Submenu.menu_id == menu_id,
             ).count()
-            dishesCount = s.query(Menu, Submenu, Dish).filter(
+            dishes_count = s.query(Menu, Submenu, Dish).filter(
                 (Menu.id == Submenu.menu_id) & (Submenu.id == Dish.submenu_id),
             ).count()
 
-            menuRes = MN.MenuShow(
+            menu_res = MenuShow(
                 id=str(menu.id),
                 title=menu.title,
                 description=menu.description,
-                submenus_count=submenusCount,
-                dishes_count=dishesCount,
+                submenus_count=submenus_count,
+                dishes_count=dishes_count,
             )
 
-        return menuRes
+        return menu_res
 
-    def createMenu(self, menu):
+    def create_menu(self, menu: Menu) -> Menu:
         with self.db.session_scope() as s:
             s.add(menu)
 
         return menu
 
-    def updateMenu(self, menuId, menuUpdate):
+    def update_menu(self, menu_id: str, menu_update: Menu) -> Menu:
         with self.db.session_scope() as s:
-            menu = s.query(Menu).filter(Menu.id == menuId).first()
+            menu = s.query(Menu).filter(Menu.id == menu_id).first()
             if menu is None:
                 return None
 
-            menu.title = menuUpdate.title
-            menu.description = menuUpdate.description
+            menu.title = menu_update.title
+            menu.description = menu_update.description
 
-        return menuUpdate
+        return menu_update
 
-    def deleteMenu(self, menuId):
+    def delete_menu(self, menu_id: str) -> str:
         with self.db.session_scope() as s:
-            menu = s.query(Menu).filter(Menu.id == menuId).first()
+            menu = s.query(Menu).filter(Menu.id == menu_id).first()
             if menu is None:
                 return None
 
             s.delete(menu)
-        return menuId
+        return menu_id

@@ -6,8 +6,8 @@ services:
     restart: always
     volumes:
       - ./.database/postgres/data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=qwerty
+    env_file:
+      - .env
     ports:
       - 5436:5432
 
@@ -25,5 +25,5 @@ services:
     depends_on:
       - db
       - cache
-    environment:
-      - DB_PASSWORD=qwerty
+    env_file:
+      - .env

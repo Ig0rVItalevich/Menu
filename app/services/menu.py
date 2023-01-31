@@ -1,55 +1,82 @@
+from cache.cache import AbstractCache
 from storage import models
+from storage.repository import Repository
+from structs.menu import MenuShow, MenuCreated, MenuCreate
+
+from abc import ABC, abstractmethod
 
 
-class MenuService():
-    def __init__(self, repos, cache):
+class AbstractMenuService(ABC):
+    @abstractmethod
+    def get_menus(self):
+        pass
+
+    @abstractmethod
+    def get_menu(self, menu_id):
+        pass
+
+    @abstractmethod
+    def create_menu(self, menu):
+        pass
+
+    @abstractmethod
+    def update_menu(self, menu_update, menu_id):
+        pass
+
+    @abstractmethod
+    def delete_menu(self, menu_id):
+        pass
+
+
+class MenuService(AbstractMenuService):
+    def __init__(self, repos: Repository, cache: AbstractCache):
         self.repos = repos
         self.cache = cache
 
-    def getMenus(self):
-        return self.repos.getMenus()
+    def get_menus(self) -> list[MenuShow]:
+        return self.repos.get_menus()
 
-    def getMenu(self, menuId):
-        cacheId = f'menu:{menuId}'
-        cacheValue = self.cache.get(cacheId)
-        if cacheValue is not None:
-            return cacheValue
+    def get_menu(self, menu_id: str) -> MenuShow:
+        cache_id = f'menu:{menu_id}'
+        cache_value = self.cache.get(cache_id)
+        if cache_value is not None:
+            return cache_value
 
-        bdValue = self.repos.getMenu(menuId)
-        if bdValue is None:
-            return bdValue
+        bd_value = self.repos.get_menu(menu_id)
+        if bd_value is None:
+            return bd_value
         self.cache.set(
-            cacheId, {
-                'id': bdValue.id,
-                'title': bdValue.title,
-                'description': bdValue.description,
-                'submenus_count': bdValue.submenus_count,
-                'dishes_count': bdValue.dishes_count,
+            cache_id, {
+                'id': bd_value.id,
+                'title': bd_value.title,
+                'description': bd_value.description,
+                'submenus_count': bd_value.submenus_count,
+                'dishes_count': bd_value.dishes_count,
             },
         )
 
-        return bdValue
+        return bd_value
 
-    def createMenu(self, menu):
-        menuModel = models.Menu(
+    def create_menu(self, menu: MenuCreate) -> MenuCreated:
+        menu_model = models.Menu(
             title=menu.title,
             description=menu.description,
         )
-        menuCreated = self.repos.createMenu(menuModel)
+        menu_created = self.repos.create_menu(menu_model)
 
-        return menuCreated
+        return menu_created
 
-    def updateMenu(self, menuUpdate, menuId):
-        menuModel = models.Menu(
-            title=menuUpdate.title,
-            description=menuUpdate.description,
+    def update_menu(self, menu_update: MenuCreate, menu_id: str) -> MenuCreated:
+        menu_model = models.Menu(
+            title=menu_update.title,
+            description=menu_update.description,
         )
 
-        self.cache.delete(f'menu:{menuId}')
+        self.cache.delete(f'menu:{menu_id}')
 
-        return self.repos.updateMenu(menuId, menuModel)
+        return self.repos.update_menu(menu_id, menu_model)
 
-    def deleteMenu(self, menuId):
-        self.repos.deleteMenu(menuId)
+    def delete_menu(self, menu_id: str):
+        self.repos.delete_menu(menu_id)
 
-        self.cache.delete(f'menu:{menuId}')
+        self.cache.delete(f'menu:{menu_id}')

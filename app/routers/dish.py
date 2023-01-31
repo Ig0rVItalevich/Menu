@@ -3,100 +3,102 @@ from fastapi.responses import JSONResponse
 from init import service
 from structs.dish import DishCreate, DishCreated, DishShow
 
-dishRouter = APIRouter()
+dish_router = APIRouter()
 
 
-@dishRouter.get(
+@dish_router.get(
     path='/',
     summary='Get dishes',
     description='Get all dishes',
     response_model=list[DishShow],
     status_code=status.HTTP_200_OK,
 )
-def getDishes(submenu_id: int = Path(...)):
-    return service.dishService.getDishes(submenu_id)
+def get_dishes(submenu_id: int = Path(...)):
+    return service.dish_service.get_dishes(submenu_id)
 
 
-@dishRouter.get(
+@dish_router.get(
     path='/{dish_id}',
     summary='Get dish',
     description='Get concrete dish',
     response_model=DishShow,
     status_code=status.HTTP_200_OK,
 )
-def getDish(
+def get_dish(
     menu_id: int = Path(..., gt=0), submenu_id: int = Path(..., gt=0),
     dish_id: int = Path(..., gt=0),
 ):
-    dishSelected = service.dishService.getDish(menu_id, submenu_id, dish_id)
+    dish_selected = service.dish_service.get_dish(menu_id, submenu_id, dish_id)
 
-    if dishSelected is None:
+    if dish_selected is None:
         return JSONResponse(
             content={'detail': 'dish not found'},
             status_code=status.HTTP_404_NOT_FOUND,
         )
     else:
-        return dishSelected
+        return dish_selected
 
 
-@dishRouter.post(
+@dish_router.post(
     path='/',
     summary='Post dish',
     description='Post one dish',
     response_model=DishCreated,
     status_code=status.HTTP_201_CREATED,
 )
-def createDish(
+def create_dish(
     dish: DishCreate, menu_id: int = Path(..., gt=0),
     submenu_id: int = Path(...),
 ):
-    dishCreated = service.dishService.createDish(dish, menu_id, submenu_id)
+    dish_created = service.dish_service.create_dish(dish, menu_id, submenu_id)
 
     return DishCreated(
-        id=str(dishCreated.id), title=dishCreated.title,
-        description=dishCreated.description, price=f'{dishCreated.price:.2f}',
+        id=str(dish_created.id),
+        title=dish_created.title,
+        description=dish_created.description,
+        price=f'{dish_created.price:.2f}',
     )
 
 
-@dishRouter.patch(
+@dish_router.patch(
     path='/{dish_id}',
     summary='Upgrade dish',
     description='Upgrade one dish',
     response_model=DishCreated,
     status_code=status.HTTP_200_OK,
 )
-def updateDish(
+def update_dish(
     dish: DishCreate, menu_id: int = Path(..., gt=0),
     submenu_id: int = Path(..., gt=0),
     dish_id: int = Path(..., gt=0),
 ):
-    dishUpdated = service.dishService.updateDish(
+    dish_updated = service.dish_service.update_dish(
         dish, menu_id, submenu_id, dish_id,
     )
 
-    if dishUpdated is None:
+    if dish_updated is None:
         return JSONResponse(
             content={'detail': 'dish not found'},
             status_code=status.HTTP_404_NOT_FOUND,
         )
     else:
         return DishCreated(
-            id=str(dishUpdated.id),
-            title=dishUpdated.title,
-            description=dishUpdated.description,
-            price=f'{dishUpdated.price:.2f}',
+            id=str(dish_updated.id),
+            title=dish_updated.title,
+            description=dish_updated.description,
+            price=f'{dish_updated.price:.2f}',
         )
 
 
-@dishRouter.delete(
+@dish_router.delete(
     path='/{dish_id}',
     summary='Delete dish',
     description='Delete one dish',
     status_code=status.HTTP_200_OK,
 )
-def deleteDish(
+def delete_dish(
     menu_id: int = Path(..., gt=0),
     submenu_id: int = Path(..., gt=0),
     dish_id: int = Path(..., gt=0),
 ):
-    service.dishService.deleteDish(menu_id, submenu_id, dish_id)
+    service.dish_service.delete_dish(menu_id, submenu_id, dish_id)

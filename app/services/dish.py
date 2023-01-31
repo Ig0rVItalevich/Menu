@@ -1,63 +1,98 @@
-from cache.cache import Cache
+from abc import ABC, abstractmethod
+
+from cache.cache import AbstractCache
 from storage import models
+from storage.repository import Repository
+from structs.dish import DishCreate, DishCreated, DishShow
 
 
-class DishService():
-    def __init__(self, repos, cache: Cache):
+class AbstractDishService(ABC):
+    @abstractmethod
+    def get_dishes(self, submenu_id):
+        pass
+
+    @abstractmethod
+    def get_dish(self, menu_id, submenu_id, dish_id):
+        pass
+
+    @abstractmethod
+    def create_dish(self, dish, menu_id, submenu_id):
+        pass
+
+    @abstractmethod
+    def update_dish(self, dish_update, menu_id, submenu_id, dish_id):
+        pass
+
+    @abstractmethod
+    def delete_dish(self, menu_id, submenu_id, dish_id):
+        pass
+
+
+class DishService(AbstractDishService):
+    def __init__(self, repos: Repository, cache: AbstractCache):
         self.repos = repos
         self.cache = cache
 
-    def getDishes(self, submenuId):
-        return self.repos.getDishes(submenuId)
+    def get_dishes(self, submenu_id: str) -> list[DishShow]:
+        return self.repos.get_dishes(submenu_id)
 
-    def getDish(self, menuId, submenuId, dishId):
-        cacheId = f'dish:{dishId}'
-        cacheValue = self.cache.get(cacheId)
-        if cacheValue is not None:
-            return cacheValue
+    def get_dish(
+        self, menu_id: str, submenu_id: str,
+        dish_id: str,
+    ) -> DishShow:
+        cache_id = f'dish:{dish_id}'
+        cache_value = self.cache.get(cache_id)
+        if cache_value is not None:
+            return cache_value
 
-        bdValue = self.repos.getDish(dishId)
-        if bdValue is None:
-            return bdValue
+        bd_value = self.repos.get_dish(dish_id)
+        if bd_value is None:
+            return bd_value
         self.cache.set(
-            cacheId, {
-                'id': bdValue.id,
-                'title': bdValue.title,
-                'description': bdValue.description,
-                'submenu_id': bdValue.submenu_id,
-                'price': bdValue.price,
+            cache_id, {
+                'id': bd_value.id,
+                'title': bd_value.title,
+                'description': bd_value.description,
+                'submenu_id': bd_value.submenu_id,
+                'price': bd_value.price,
             },
         )
 
-        return bdValue
+        return bd_value
 
-    def createDish(self, dish, menuId, submenuId):
-        dishModel = models.Dish(
+    def create_dish(
+        self, dish: DishCreate, menu_id: str,
+        submenu_id: str,
+    ) -> DishCreated:
+        dish_model = models.Dish(
             title=dish.title,
             description=dish.description,
             price=dish.price,
-            submenu_id=submenuId,
+            submenu_id=submenu_id,
         )
-        dishCreated = self.repos.createDish(dishModel)
+        dish_created = self.repos.create_dish(dish_model)
 
-        return dishCreated
+        return dish_created
 
-    def updateDish(self, dishUpdate, menuId, submenuId, dishId):
-        dishModel = models.Dish(
-            title=dishUpdate.title,
-            description=dishUpdate.description,
-            price=dishUpdate.price,
-            submenu_id=dishUpdate.submenu_id,
+    def update_dish(
+        self, dish_update: DishCreate,
+        menu_id: str, submenu_id: str, dish_id: str,
+    ) -> DishCreated:
+        dish_model = models.Dish(
+            title=dish_update.title,
+            description=dish_update.description,
+            price=dish_update.price,
+            submenu_id=dish_update.submenu_id,
         )
-        updatedDish = self.repos.updateDish(dishId, dishModel)
+        updated_dish = self.repos.update_dish(dish_id, dish_model)
 
-        self.cache.delete(f'dish:{dishId}')
+        self.cache.delete(f'dish:{dish_id}')
 
-        return updatedDish
+        return updated_dish
 
-    def deleteDish(self, menuId, submenuId, dishId):
-        self.repos.deleteDish(dishId)
+    def delete_dish(self, menu_id: str, submenu_id: str, dish_id: str):
+        self.repos.delete_dish(dish_id)
 
-        self.cache.delete(f'dish:{dishId}')
-        self.cache.delete(f'submenu:{submenuId}')
-        self.cache.delete(f'menu:{menuId}')
+        self.cache.delete(f'dish:{dish_id}')
+        self.cache.delete(f'submenu:{submenu_id}')
+        self.cache.delete(f'menu:{menu_id}')

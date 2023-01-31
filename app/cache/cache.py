@@ -1,9 +1,24 @@
 import pickle
+from abc import ABC, abstractmethod
 
 import redis
 
 
-class Cache():
+class AbstractCache(ABC):
+    @abstractmethod
+    def set(self, id, model):
+        pass
+
+    @abstractmethod
+    def get(self, id):
+        pass
+
+    @abstractmethod
+    def delete(self, id):
+        pass
+
+
+class Cache(AbstractCache):
     def __init__(self, config):
         self.cache = redis.StrictRedis(
             host=config['host'],
@@ -12,15 +27,19 @@ class Cache():
         )
 
     def set(self, id, model):
-        cacheModel = pickle.dumps(model)
-        self.cache.set(id, cacheModel)
+        cache_model = pickle.dumps(model)
+        self.cache.set(id, cache_model)
 
     def get(self, id):
-        cacheModel = self.cache.get(id)
-        if cacheModel is None:
+        cache_model = self.cache.get(id)
+        if cache_model is None:
             return None
 
-        return pickle.loads(cacheModel)
+        return pickle.loads(cache_model)
 
     def delete(self, id):
         self.cache.delete(id)
+
+
+def new_cache(config):
+    return Cache(config=config)

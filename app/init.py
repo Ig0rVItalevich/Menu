@@ -1,10 +1,11 @@
 import configparser
 import os
 
-from cache.cache import Cache
-from services.service import Service
-from storage import models
-from storage.repository import DB, Repository
+from cache.cache import new_cache
+from services.service import new_service
+from storage.database import DB
+from storage.models import DeclarativeBase
+from storage.repository import new_repository
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -24,9 +25,9 @@ CONFIG_CACHE = {
     'db': config['CACHE']['db'],
 }
 
-db = DB(CONFIG_DB, models.DeclarativeBase)
+db = DB(CONFIG_DB, DeclarativeBase)
 db.recreate_tables()
 
-repository = Repository(db)
-cache = Cache(CONFIG_CACHE)
-service = Service(repository, cache)
+repository = new_repository(db)
+cache = new_cache(CONFIG_CACHE)
+service = new_service(repository, cache)

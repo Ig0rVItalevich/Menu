@@ -1,59 +1,92 @@
+from abc import ABC, abstractmethod
+
+from cache.cache import AbstractCache
 from storage import models
+from storage.repository import Repository
+from structs.submenu import SubMenuCreate, SubMenuCreated, SubMenuShow
 
 
-class SubmenuService():
-    def __init__(self, repos, cache):
+class AbstractSubmenuService(ABC):
+    @abstractmethod
+    def get_submenus(self):
+        pass
+
+    @abstractmethod
+    def get_submenu(self, menu_id, submenu_id):
+        pass
+
+    @abstractmethod
+    def create_submenu(self, submenu, menu_id):
+        pass
+
+    @abstractmethod
+    def update_submenu(self, submenu_update, menu_id, submenu_id):
+        pass
+
+    @abstractmethod
+    def delete_submenu(self, menu_id, submenu_id):
+        pass
+
+
+class SubmenuService(AbstractSubmenuService):
+    def __init__(self, repos: Repository, cache: AbstractCache):
         self.repos = repos
         self.cache = cache
 
-    def getSubmenus(self):
-        return self.repos.getSubmenus()
+    def get_submenus(self) -> list[SubMenuShow]:
+        return self.repos.get_submenus()
 
-    def getSubmenu(self, menuId, submenuId):
-        cacheId = f'submenu:{submenuId}'
-        cacheValue = self.cache.get(cacheId)
-        if cacheValue is not None:
-            return cacheValue
+    def get_submenu(self, menu_id: str, submenu_id: str) -> SubMenuShow:
+        cache_id = f'submenu:{submenu_id}'
+        cache_value = self.cache.get(cache_id)
+        if cache_value is not None:
+            return cache_value
 
-        bdValue = self.repos.getSubmenu(submenuId)
-        if bdValue is None:
-            return bdValue
+        bd_value = self.repos.get_submenu(submenu_id)
+        if bd_value is None:
+            return bd_value
         self.cache.set(
-            cacheId, {
-                'title': bdValue.title,
-                'description': bdValue.description,
-                'menu_id': bdValue.menu_id,
-                'dishes_count': bdValue.dishes_count,
+            cache_id, {
+                'title': bd_value.title,
+                'description': bd_value.description,
+                'menu_id': bd_value.menu_id,
+                'dishes_count': bd_value.dishes_count,
             },
         )
 
-        return bdValue
+        return bd_value
 
-    def createSubmenu(self, submenu, menuId):
-        submenuModel = models.Submenu(
+    def create_submenu(
+        self, submenu: SubMenuCreate,
+        menu_id: str,
+    ) -> SubMenuCreated:
+        submenu_model = models.Submenu(
             title=submenu.title,
             description=submenu.description,
-            menu_id=menuId,
+            menu_id=menu_id,
         )
-        submenuCreated = self.repos.createSubmenu(submenuModel)
+        submenu_created = self.repos.create_submenu(submenu_model)
 
-        self.cache.delete(f'menu:{menuId}')
+        self.cache.delete(f'menu:{menu_id}')
 
-        return submenuCreated
+        return submenu_created
 
-    def updateSubmenu(self, submenuUpdate, menuId, submenuId):
-        submenuModel = models.Submenu(
-            title=submenuUpdate.title,
-            description=submenuUpdate.description,
-            menu_id=submenuUpdate.menu_id,
+    def update_submenu(
+        self, submenu_update: SubMenuCreate,
+        menu_id: str, submenu_id: str,
+    ) -> SubMenuCreated:
+        submenu_model = models.Submenu(
+            title=submenu_update.title,
+            description=submenu_update.description,
+            menu_id=submenu_update.menu_id,
         )
 
-        self.cache.delete(f'submenu:{submenuId}')
+        self.cache.delete(f'submenu:{submenu_id}')
 
-        return self.repos.updateSubmenu(submenuId, submenuModel)
+        return self.repos.update_submenu(submenu_id, submenu_model)
 
-    def deleteSubmenu(self, menuId, submenuId):
-        self.repos.deleteSubmenu(submenuId)
+    def delete_submenu(self, menu_id: str, submenu_id: str):
+        self.repos.delete_submenu(submenu_id)
 
-        self.cache.delete(f'submenu:{submenuId}')
-        self.cache.delete(f'menu:{menuId}')
+        self.cache.delete(f'submenu:{submenu_id}')
+        self.cache.delete(f'menu:{menu_id}')
