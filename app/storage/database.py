@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import sessionmaker
 
+
 class DB():
     def __init__(self, config: dict, base):
         self.declarative_base = base

@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
+
 from structs.dish import DishShow
 
-from .models import Dish
 from .database import DB
+from .models import Dish
 
 
 class AbstractDishRepository(ABC):

@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
+
 from structs.submenu import SubMenuShow
 
-from .models import Dish, Submenu
 from .database import DB
+from .models import Dish, Submenu
+
 
 class AbstractSubmenuRepository(ABC):
     @abstractmethod
@@ -24,6 +26,7 @@ class AbstractSubmenuRepository(ABC):
     @abstractmethod
     def delete_submenu(self, submenu_id):
         pass
+
 
 class SubmenuRepository(AbstractSubmenuRepository):
     def __init__(self, db: DB):
@@ -75,7 +78,10 @@ class SubmenuRepository(AbstractSubmenuRepository):
 
         return submenu
 
-    def update_submenu(self, submenu_id: str, submenu_update: Submenu) -> Submenu:
+    def update_submenu(
+        self, submenu_id: str,
+        submenu_update: Submenu,
+    ) -> Submenu:
         with self.db.session_scope() as s:
             submenu = s.query(Submenu).filter(Submenu.id == submenu_id).first()
             if submenu is None:

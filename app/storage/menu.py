@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
+
 from structs.menu import MenuShow
 
-from .models import Dish, Menu, Submenu
 from .database import DB
+from .models import Dish, Menu, Submenu
 
 
 class AbstractMenuRepository(ABC):

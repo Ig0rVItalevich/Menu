@@ -1,9 +1,9 @@
+from abc import ABC, abstractmethod
+
 from cache.cache import AbstractCache
 from storage import models
 from storage.repository import Repository
-from structs.menu import MenuShow, MenuCreated, MenuCreate
-
-from abc import ABC, abstractmethod
+from structs.menu import MenuCreate, MenuCreated, MenuShow
 
 
 class AbstractMenuService(ABC):
@@ -66,7 +66,10 @@ class MenuService(AbstractMenuService):
 
         return menu_created
 
-    def update_menu(self, menu_update: MenuCreate, menu_id: str) -> MenuCreated:
+    def update_menu(
+        self, menu_update: MenuCreate,
+        menu_id: str,
+    ) -> MenuCreated:
         menu_model = models.Menu(
             title=menu_update.title,
             description=menu_update.description,
