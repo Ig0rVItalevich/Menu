@@ -34,7 +34,21 @@ class DishService(AbstractDishService):
         self.cache = cache
 
     def get_dishes(self, submenu_id: str) -> list[DishShow]:
-        return self.repos.get_dishes(submenu_id)
+        dishes = self.repos.get_dishes(submenu_id)
+
+        for dish in dishes:
+            cache_id = f'dish:{dish.id}'
+            self.cache.set(
+                cache_id, {
+                    'id': dish.id,
+                    'title': dish.title,
+                    'description': dish.description,
+                    'submenu_id': dish.submenu_id,
+                    'price': dish.price,
+                },
+            )
+
+        return dishes
 
     def get_dish(
         self, menu_id: str, submenu_id: str,

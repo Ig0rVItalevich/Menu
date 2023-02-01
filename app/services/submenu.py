@@ -34,7 +34,21 @@ class SubmenuService(AbstractSubmenuService):
         self.cache = cache
 
     def get_submenus(self) -> list[SubMenuShow]:
-        return self.repos.get_submenus()
+        submenus = self.repos.get_submenus()
+
+        for submenu in submenus:
+            cache_id = f'submenu:{submenu.id}'
+            self.cache.set(
+                cache_id, {
+                    'id': submenu.id,
+                    'title': submenu.title,
+                    'description': submenu.description,
+                    'menu_id': submenu.menu_id,
+                    'dishes_count': submenu.dishes_count,
+                },
+            )
+
+        return submenus
 
     def get_submenu(self, menu_id: str, submenu_id: str) -> SubMenuShow:
         cache_id = f'submenu:{submenu_id}'
@@ -47,6 +61,7 @@ class SubmenuService(AbstractSubmenuService):
             return bd_value
         self.cache.set(
             cache_id, {
+                'id': bd_value.id,
                 'title': bd_value.title,
                 'description': bd_value.description,
                 'menu_id': bd_value.menu_id,

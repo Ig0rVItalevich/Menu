@@ -34,7 +34,21 @@ class MenuService(AbstractMenuService):
         self.cache = cache
 
     def get_menus(self) -> list[MenuShow]:
-        return self.repos.get_menus()
+        menus = self.repos.get_menus()
+
+        for menu in menus:
+            cache_id = f'menu:{menu.id}'
+            self.cache.set(
+                cache_id, {
+                    'id': menu.id,
+                    'title': menu.title,
+                    'description': menu.description,
+                    'submenus_count': menu.submenus_count,
+                    'dishes_count': menu.dishes_count,
+                },
+            )
+
+        return menus
 
     def get_menu(self, menu_id: str) -> MenuShow:
         cache_id = f'menu:{menu_id}'
