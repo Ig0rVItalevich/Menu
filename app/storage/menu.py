@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import json
+
 from structs.menu import MenuShow
 
 from .database import DB
@@ -7,6 +9,10 @@ from .models import Dish, Menu, Submenu
 
 
 class AbstractMenuRepository(ABC):
+    @abstractmethod
+    def get_all_data(self):
+        pass
+    
     @abstractmethod
     def get_menus(self):
         pass
@@ -31,6 +37,26 @@ class AbstractMenuRepository(ABC):
 class MenuRepository(AbstractMenuRepository):
     def __init__(self, db: DB):
         self.db = db
+        
+    def get_all_data(self):
+        menus = {}
+        
+        with self.db.session_scope() as s:
+            for row in s.query(Menu, Submenu, Dish).filter((Menu.id == Submenu.menu_id) & (Submenu.id == Dish.submenu_id)).all():
+                if row.Menu.id not in menus:
+                    menus[row.Menu.id] = {"title": row.Menu.title,
+                                          "description": row.Menu.description,
+                                          "submenus": {}}
+                if row.Submenu.id not in menus[row.Menu.id]["submenus"]:
+                    menus[row.Menu.id]["submenus"][row.Submenu.id] = {"title": row.Submenu.title,
+                                                                      "description": row.Submenu.description,
+                                                                      "dishes": {}}
+                menus[row.Menu.id]["submenus"][row.Submenu.id]["dishes"][row.Dish.id] = {"title": row.Dish.title,
+                                                                                         "description": row.Dish.description,
+                                                                                         "price": str(row.Dish.price)}
+        
+        return menus
+        
 
     def get_menus(self) -> list[MenuShow]:
         menus = []

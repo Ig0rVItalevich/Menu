@@ -8,6 +8,10 @@ from structs.menu import MenuCreate, MenuCreated, MenuShow
 
 class AbstractMenuService(ABC):
     @abstractmethod
+    def get_all_data(self):
+        pass
+
+    @abstractmethod
     def get_menus(self):
         pass
 
@@ -32,6 +36,9 @@ class MenuService(AbstractMenuService):
     def __init__(self, repos: Repository, cache: AbstractCache):
         self.repos = repos
         self.cache = cache
+        
+    def get_all_data(self):
+        return self.repos.get_all_data()
 
     def get_menus(self) -> list[MenuShow]:
         menus = self.repos.get_menus()

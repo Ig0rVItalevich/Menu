@@ -25,7 +25,7 @@ class Submenu(DeclarativeBase):
     description = Column('description', Text, nullable=False)
     menu_id = Column(Integer, ForeignKey('menus.id', ondelete='CASCADE'))
 
-    menu = relationship(Menu, innerjoin=True)
+    menu = relationship(Menu)
 
     def __repr__(self):
         return f'id: {self.id}, title: {self.title}, \
@@ -41,7 +41,7 @@ class Dish(DeclarativeBase):
     price = Column('price', DECIMAL, nullable=False)
     submenu_id = Column(Integer, ForeignKey('submenus.id', ondelete='CASCADE'))
 
-    submenu = relationship(Submenu, innerjoin=True)
+    submenu = relationship(Submenu)
 
     def __repr__(self):
         return f'id: {self.id}, title: {self.title}, \

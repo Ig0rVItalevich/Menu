@@ -15,7 +15,8 @@ CONFIG_DB = {
     'host': config['DATABASE']['host'],
     'port': config['DATABASE']['port'],
     'username': config['DATABASE']['username'],
-    'password': os.environ.get('DB_PASSWORD'),
+    'password': config['DATABASE']['password'],
+    # 'password': os.environ.get('DB_PASSWORD'),
     'database': config['DATABASE']['database'],
 }
 
@@ -24,6 +25,8 @@ CONFIG_CACHE = {
     'port': config['CACHE']['port'],
     'db': config['CACHE']['db'],
 }
+
+DATA_PATH = config['DATA']['path']
 
 db = DB(CONFIG_DB, DeclarativeBase)
 db.recreate_tables()

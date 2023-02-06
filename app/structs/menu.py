@@ -18,3 +18,4 @@ class MenuCreated(BaseModel):
     id: str
     title: str
     description: str
+
