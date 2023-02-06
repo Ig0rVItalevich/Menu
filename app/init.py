@@ -26,6 +26,12 @@ CONFIG_CACHE = {
     'db': config['CACHE']['db'],
 }
 
+CONFIG_CELERY = {
+    'broker': config['CELERY']['broker'],
+    'backend': config['CELERY']['backend'],
+    'include': ["tasks.tasks"],
+}
+
 DATA_PATH = config['DATA']['path']
 
 db = DB(CONFIG_DB, DeclarativeBase)
